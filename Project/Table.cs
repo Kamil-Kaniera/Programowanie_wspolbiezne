@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.Models
+namespace Logic
 {
-    internal class Table(int length, int width)
+    public class Table(int length, int width)
     {
         private readonly int _length = length;
         private readonly int _width = width;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    internal class BallRepository : IBallRepository
+    public class BallRepository : IBallRepository
     {
         private List<Ball> _balls = [];
 
