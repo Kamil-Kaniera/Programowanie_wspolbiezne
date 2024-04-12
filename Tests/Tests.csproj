@@ -22,12 +22,10 @@
 
   <ItemGroup>
 	<Folder Include="Data\" />
-    <Folder Include="Presentation\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj" />
-    <ProjectReference Include="..\Presentation\Presentation.csproj" />
     <ProjectReference Include="..\Project\Logic.csproj" />
   </ItemGroup>
 
