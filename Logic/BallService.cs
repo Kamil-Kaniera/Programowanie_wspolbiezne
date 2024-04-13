@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -15,6 +16,8 @@ namespace Logic
         private BallRepository _repository = new();
         private List<Task> _tasks = [];
         private bool _movement = false;
+        
+        public ObservableCollection<BallLogic> Balls { get; set; }  //Trzeba dokonczyc
 
         public void CreateBalls(int numberOfBalls)
         {
@@ -28,6 +31,8 @@ namespace Logic
                 Ball ball = new(randomizedX, randomizedY);
 
                 _repository.AddBall(ball);
+                // Balls.Add(new BallLogic(ball));
+                // ball.PropertyChanged += Update;
 
                 // Add new task for new ball
                 _tasks.Add(new Task(() =>
@@ -47,12 +52,12 @@ namespace Logic
 
         public void MoveBall(Ball ball, int x, int y)
         {
-            int newX = ball.positionX + x;
-            int newY = ball.positionY + y;
+            int newX = ball.PositionX + x;
+            int newY = ball.PositionY + y;
             if (CheckWallCollision(newX, newY))
             {
-                ball.positionX += x;
-                ball.positionY += y;
+                ball.PositionX += x;
+                ball.PositionY += y;
             }
         }
 
@@ -121,7 +126,7 @@ namespace Logic
             {
                 List<int> position = new List<int>
                 {
-                    ball.positionX, ball.positionY
+                    ball.PositionX, ball.PositionY
                 };
                 result.Add(position);
             }

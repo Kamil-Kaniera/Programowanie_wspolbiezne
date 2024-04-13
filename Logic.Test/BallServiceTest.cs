@@ -16,8 +16,8 @@ namespace Logic.Test
 
             service.MoveBall(ball, 5, 5);
 
-            Assert.AreEqual(ball.positionX, 5);
-            Assert.AreEqual(ball.positionY, 5);
+            Assert.AreEqual(ball.PositionX, 5);
+            Assert.AreEqual(ball.PositionY, 5);
         }
 
         [TestMethod]

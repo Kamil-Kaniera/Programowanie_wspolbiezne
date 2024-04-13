@@ -1,17 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-namespace Data
-{
-    public class Ball(int x, int y)
+
+namespace Data { 
+    public class Ball
     {
-        private int _X = x;
-        private int _Y = y;
+        private int _x;
+        private int _y;
+        
+        public  Ball(int x, int y) {
+             _x = x;
+             _y = y;
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        
+        public int PositionX {
+            get => _x;
+            set {
+                _x = value;
+                OnPropertyChanged();
+            }
+        }
 
-        public int positionX { get { return _X; } set { _X = value; } }
-        public int positionY { get { return _Y; } set { _Y = value; } }
+        public int PositionY {
+            get => _y;
+            set {
+                _y = value;
+                OnPropertyChanged();
+            }
+        }
+        
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }        
     }
 }

@@ -13,6 +13,7 @@ namespace Data
         public void AddBall(Ball ball)
         {
             _balls.Add(ball);
+            
         }
 
         public List<Ball> GetBalls()
