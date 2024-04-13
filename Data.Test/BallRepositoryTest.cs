@@ -1,6 +1,6 @@
 using Data;
 
-namespace Tests.Data
+namespace Data.Test
 {
     [TestClass]
     public class BallRepositoryTest
@@ -11,8 +11,8 @@ namespace Tests.Data
             Ball ball = new(0, 0);
             BallRepository repository = new BallRepository();
 
-            repository.addBall(ball);
-            Assert.IsTrue(repository.getBalls().Contains(ball));
+            repository.AddBall(ball);
+            Assert.IsTrue(repository.GetBalls().Contains(ball));
         }
 
         [TestMethod]
@@ -23,12 +23,12 @@ namespace Tests.Data
 
             BallRepository repository = new BallRepository();
 
-            repository.addBall(ball_1);
-            repository.addBall(ball_2);
+            repository.AddBall(ball_1);
+            repository.AddBall(ball_2);
 
-            repository.removeBall(ball_1);
+            repository.RemoveBall(ball_1);
 
-            Assert.IsFalse(repository.getBalls().Contains(ball_1));
+            Assert.IsFalse(repository.GetBalls().Contains(ball_1));
         }
     }
 }

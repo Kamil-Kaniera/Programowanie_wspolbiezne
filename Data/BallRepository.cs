@@ -10,17 +10,22 @@ namespace Data
     {
         private List<Ball> _balls = [];
 
-        public void addBall(Ball ball)
+        public void AddBall(Ball ball)
         {
             _balls.Add(ball);
         }
 
-        public List<Ball> getBalls()
+        public List<Ball> GetBalls()
         {
             return _balls;
         }
 
-        public void removeBall(Ball ball)
+        public void RemoveAllBalls()
+        {
+            _balls.Clear();
+        }
+
+        public void RemoveBall(Ball ball)
         {
             _balls.Remove(ball);
         }

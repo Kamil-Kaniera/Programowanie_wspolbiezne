@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    internal interface IBallRepository
+    internal interface IBallRepository // AKA Data API
     {
-        void addBall(Ball ball);
-
-        void removeBall(Ball ball);
-
-        List<Ball> getBalls();
+        void AddBall(Ball ball);
+        void RemoveBall(Ball ball);
+        void RemoveAllBalls();
+        List<Ball> GetBalls();
     }
 }
