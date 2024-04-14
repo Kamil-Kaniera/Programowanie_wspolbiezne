@@ -39,12 +39,25 @@ namespace Logic
                 // Add new task for new ball
                 _tasks.Add(new Task(() =>
                 {
+                    int direction = rnd.Next(0, 4);
                     while (_movement)
                     {
-                        //Randomize movement - <-1;1> move in both directions
-                        int moveX = rnd.Next(0, 2) - 1;
-                        int moveY = rnd.Next(0, 2) - 1;
-                        MoveBall(ball, moveX, moveY);
+                        switch (direction)
+                        {
+                            case 0: // UP
+                                MoveBall(ball, 0, 1);
+                                break;
+                            case 1: // DOWN
+                                MoveBall(ball, 0, -1);
+                                break;
+                            case 2: // RIGHT
+                                MoveBall(ball, 1, 0);
+                                break;
+                            case 3: // LEFT
+                                MoveBall(ball, -1, 0);
+                                break;
+                        }
+
                         Thread.Sleep(100);
                     }
                 }));
@@ -54,12 +67,12 @@ namespace Logic
 
         public void MoveBall(Ball ball, int x, int y)
         {
-            int newX = ball.PositionX + x;
-            int newY = ball.PositionY + y;
+            int newX = ball.X + x;
+            int newY = ball.Y + y;
             if (CheckWallCollision(newX, newY))
             {
-                ball.PositionX += x;
-                ball.PositionY += y;
+                ball.X += x;
+                ball.Y += y;
             }
         }
 
@@ -90,7 +103,10 @@ namespace Logic
 
             foreach (Task task in _tasks)
             {
-                task.Start();
+                if (task.Status == TaskStatus.Created)
+                {
+                    task.Start();
+                }
             }
         }
 
@@ -135,7 +151,7 @@ namespace Logic
             {
                 List<int> position = new List<int>
                 {
-                    ball.PositionX, ball.PositionY
+                    ball.X, ball.Y
                 };
                 result.Add(position);
             }

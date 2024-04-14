@@ -4,14 +4,14 @@ using Data;
 
 namespace Logic
 {
-    public class BallLogic
+    public class BallLogic : INotifyPropertyChanged
     {
         private int _x;
         private int _y;
 
         public BallLogic(Ball s) {
-            X = s.PositionX;
-            Y = s.PositionY;
+            X = s.X;
+            Y = s.X;
             Random random = new Random();
             s.PropertyChanged += UpdateBall;
         }
@@ -21,11 +21,11 @@ namespace Logic
             Ball ball = (Ball)sender;
             if (e.PropertyName == "X")
             {
-                X = ball.PositionX;
+                X = ball.X;
             }
             else if (e.PropertyName == "Y")
             {
-                Y = ball.PositionY;
+                Y = ball.Y;
             }
 
         }

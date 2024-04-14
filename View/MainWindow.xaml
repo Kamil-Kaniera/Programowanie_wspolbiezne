@@ -6,34 +6,32 @@
         xmlns:vm="clr-namespace:ViewModel;assembly=ViewModel"
         xmlns:local="clr-namespace:View"
         mc:Ignorable="d"
-        Title="Billiard Table Simulation" Height="450" Width="900">
-   
+        Title="Billiard Table Simulation" Height="600" Width="900">
+
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
-    
+
     <Grid>
         <!-- Lewa strona - przestrzeń do rysowania kul -->
-        <Canvas Name="BilliardCanvas" Background="Green" Margin="10" VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="450">
-            <Canvas.Resources>
-                <Style TargetType="Ellipse">
-                    <Setter Property="Width" Value="20"/>
-                    <Setter Property="Height" Value="20"/>
-                    <Setter Property="Fill" Value="White"/>
-                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                    <Setter Property="Canvas.Top" Value="{Binding Y}"/>
-                </Style>
-            </Canvas.Resources>
+        <Canvas Name="BilliardCanvas" Background="Green" Margin="10" VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="470" Height="470">
+
             <!-- Do rysowania kul i stołu -->
             <ItemsControl ItemsSource="{Binding Balls}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas IsItemsHost="True"/>
+                        <Canvas Background="Green"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Ellipse/>
+                        <Ellipse Width="20" Height="20" Fill="Red"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 
 namespace Data { 
-    public class Ball
+    public class Ball : INotifyPropertyChanged
     {
         private int _x;
         private int _y;
@@ -16,7 +16,7 @@ namespace Data {
         }
         public event PropertyChangedEventHandler PropertyChanged;
         
-        public int PositionX {
+        public int X {
             get => _x;
             set {
                 _x = value;
@@ -24,7 +24,7 @@ namespace Data {
             }
         }
 
-        public int PositionY {
+        public int Y {
             get => _y;
             set {
                 _y = value;

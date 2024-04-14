@@ -12,18 +12,18 @@ namespace Logic.Test
         {
             Ball ball = new(0, 0);
 
-            LogicAPI api = (LogicAPI)ILogicAPI.createAPI();
+            ILogicAPI api = (LogicAPI)ILogicAPI.createAPI();
 
             api.MoveBall(ball, 5, 5);
 
-            Assert.AreEqual(ball.PositionX, 5);
-            Assert.AreEqual(ball.PositionY, 5);
+            Assert.AreEqual(ball.X, 5);
+            Assert.AreEqual(ball.Y, 5);
         }
 
         [TestMethod]
         public void createBallsTest()
         {
-            LogicAPI api = (LogicAPI)ILogicAPI.createAPI();
+            ILogicAPI api = (LogicAPI)ILogicAPI.createAPI();
 
             api.CreateBalls(3);
 

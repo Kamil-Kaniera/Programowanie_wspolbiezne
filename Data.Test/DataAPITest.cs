@@ -9,7 +9,7 @@ namespace Data.Test
         public void AddBallTest()
         {
             Ball ball = new(0, 0);
-            DataAPI api = new DataAPI();
+            IDataAPI api = IDataAPI.cerateAPI();
 
             api.AddBall(ball);
             Assert.IsTrue(api.GetBalls().Contains(ball));
@@ -21,7 +21,7 @@ namespace Data.Test
             Ball ball_1 = new(0, 0);
             Ball ball_2 = new(1, 1);
 
-            DataAPI api = new DataAPI();
+            IDataAPI api = IDataAPI.cerateAPI();
 
             api.AddBall(ball_1);
             api.AddBall(ball_2);
