@@ -8,11 +8,12 @@ using Data;
 
 namespace Logic
 {
-    public interface IBallService // AKA Logic API
+    public interface ILogicAPI 
     {
+        static ILogicAPI createAPI() => new LogicAPI(IDataAPI.cerateAPI());
         void CreateBalls(int numberOfBalls);
         void MoveBall(Ball ball, int x, int y);
-        List<Ball> GetBalls();
+        List<BallLogic> GetBalls();
         List<List<int>> GetAllBallsPosition();
         bool CheckWallCollision(int x, int y);
         void StartMovement();

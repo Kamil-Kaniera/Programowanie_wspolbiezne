@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    internal interface IBallRepository // AKA Data API
+    public interface IDataAPI 
     {
+        static IDataAPI cerateAPI() => new DataAPI();
         void AddBall(Ball ball);
-        void RemoveBall(Ball ball);
         void RemoveAllBalls();
         List<Ball> GetBalls();
     }

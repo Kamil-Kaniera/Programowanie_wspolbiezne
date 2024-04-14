@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class BallRepository : IBallRepository
+    public class DataAPI : IDataAPI
     {
         private List<Ball> _balls = [];
 
@@ -24,11 +24,6 @@ namespace Data
         public void RemoveAllBalls()
         {
             _balls.Clear();
-        }
-
-        public void RemoveBall(Ball ball)
-        {
-            _balls.Remove(ball);
         }
     }
 }

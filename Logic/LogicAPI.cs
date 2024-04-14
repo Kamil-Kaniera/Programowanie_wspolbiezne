@@ -10,17 +10,21 @@ using Data;
 
 namespace Logic
 {
-    public class BallService(int tableX, int tableY) : IBallService
+    public class LogicAPI(IDataAPI dataAPI) : ILogicAPI
     {
-        private readonly Table _table = new(tableX, tableY);
-        private BallRepository _repository = new();
+        private readonly Table _table = new(450, 450);
+
+        private DataAPI api = (DataAPI)dataAPI;
+
         private List<Task> _tasks = [];
+
         private bool _movement = false;
-        
-        public ObservableCollection<BallLogic> Balls { get; set; }  //Trzeba dokonczyc
+
+
 
         public void CreateBalls(int numberOfBalls)
         {
+            api.RemoveAllBalls();
             for (int i = 0; i < numberOfBalls; i++)
             {
                 // Randomize starting position
@@ -30,9 +34,7 @@ namespace Logic
 
                 Ball ball = new(randomizedX, randomizedY);
 
-                _repository.AddBall(ball);
-                // Balls.Add(new BallLogic(ball));
-                // ball.PropertyChanged += Update;
+                api.AddBall(ball);
 
                 // Add new task for new ball
                 _tasks.Add(new Task(() =>
@@ -70,9 +72,16 @@ namespace Logic
             else return false;
         }
 
-        public List<Ball> GetBalls()
+        public List<BallLogic> GetBalls()
         {
-            return _repository.GetBalls();
+            List<BallLogic> balls = [];
+
+            foreach (Ball b in api.GetBalls())
+            {
+                balls.Add(new BallLogic(b));
+            }
+
+            return balls;
         }
 
         public void StartMovement()
@@ -113,7 +122,7 @@ namespace Logic
                     task.Dispose();
                 }
 
-                _repository.RemoveAllBalls();
+                api.RemoveAllBalls();
                 _tasks.Clear();
             }
         }
@@ -122,7 +131,7 @@ namespace Logic
         {
             List<List<int>> result = [];
 
-            foreach (Ball ball in _repository.GetBalls())
+            foreach (Ball ball in api.GetBalls())
             {
                 List<int> position = new List<int>
                 {
