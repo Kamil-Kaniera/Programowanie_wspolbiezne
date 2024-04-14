@@ -7,7 +7,7 @@ namespace Model
 
     public class BallModel : INotifyPropertyChanged
     {
-        private int X
+        public int X
         {
             get => _x;
             set
@@ -17,7 +17,7 @@ namespace Model
             }
         }
 
-        private int Y
+        public int Y
         {
             get => _y;
             set
@@ -31,10 +31,10 @@ namespace Model
         private int _x { get; set; }
         private int _y { get; set; }
 
-        public BallModel(int x, int y)
-        {
-            _x = x;
-            _y = y;
+        public BallModel(BallLogic s) {
+            X = s.X;
+            Y = s.Y;
+            s.PropertyChanged += UpdateBall;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -53,7 +53,7 @@ namespace Model
             }
         }
 
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

@@ -6,28 +6,44 @@ using System.Runtime.CompilerServices;
 
 namespace Model
 {
-    public class ModelAPI(ILogicAPI logicAPI) : IModelAPI
+    public class ModelAPI : IModelAPI
     {
-        private LogicAPI api = (LogicAPI)logicAPI;
+        private readonly ILogicAPI logicAPI;
 
+        public readonly ObservableCollection<BallModel> ModelBalls = new();
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public ModelAPI()
+        {
+            logicAPI = ILogicAPI.createAPI();
+        }
+
+        public ModelAPI(ILogicAPI logicAPI)
+        {
+            this.logicAPI = logicAPI;
+        }
 
         public void ClearBalls()
         {
-            throw new NotImplementedException();
+            logicAPI.StopMovement();
+            ModelBalls.Clear();
         }
 
-        public ObservableCollection<BallModel> GetCircles()
+        public void GetCircles()
         {
-            throw new NotImplementedException();
+            foreach (BallLogic s in logicAPI.GetBalls()) 
+                ModelBalls.Add(new BallModel(s));
         }
 
-        public void Start(int BallsAmount, int Radius)
+        public void Start(int ballsAmount)
         {
-            throw new NotImplementedException();
+            ModelBalls.Clear();
+            logicAPI.CreateBalls(ballsAmount);
+            logicAPI.StartMovement();
+            GetCircles();
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

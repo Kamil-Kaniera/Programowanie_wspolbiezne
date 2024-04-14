@@ -7,10 +7,10 @@ public interface IModelAPI
 {
      static IModelAPI CreateAPI() => new ModelAPI(ILogicAPI.createAPI());
 
-     abstract void Start(int BallsAmount, int Radius);
+     abstract void Start(int ballsAmount);
 
      abstract void ClearBalls();
 
-     abstract ObservableCollection<BallModel> GetCircles();
+     abstract void GetCircles();
 
 }
