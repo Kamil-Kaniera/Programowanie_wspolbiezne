@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Pool.Presentation.Model;
 
-public class BallModel(Guid ballId, int x, int y) : INotifyPropertyChanged
+public class BallModel(Guid ballId, int x, int y, int radius) : INotifyPropertyChanged
 {
     public Guid BallId => ballId;
 
@@ -17,6 +17,11 @@ public class BallModel(Guid ballId, int x, int y) : INotifyPropertyChanged
     {
         get => y;
         set => SetField(ref y, value);
+    }
+
+    public int Radius
+    {
+        get => radius;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

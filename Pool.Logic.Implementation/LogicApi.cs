@@ -35,9 +35,9 @@ public class LogicApi : ILogicApi
         for (var i = 0; i < numberOfBalls; i++)
         {
             // Randomize starting position
-            var randomizedX = _rnd.Next(0, _table.Size.Y);
-            var randomizedY = _rnd.Next(0, _table.Size.X);
-            var randomizedDirection = (Direction)_rnd.Next(1, 4);
+            var randomizedX = _rnd.Next(0, _table.Size.Y - Constants.RADIUS);
+            var randomizedY = _rnd.Next(0, _table.Size.X - Constants.RADIUS);
+            var randomizedDirection = new DirectionVector();
 
             Ball ball = new()
             {
@@ -70,6 +70,18 @@ public class LogicApi : ILogicApi
         _tasks.Clear();
     }
 
+    private async Task MoveBallRandomly(Ball ball, Action<Guid> callback)
+    {
+        while (_movement)
+        {
+            MoveBall(ball, ball.Direction.X, ball.Direction.Y);
+
+            callback(ball.BallId);
+
+            await Task.Delay(MoveIntervalMs);
+        }
+    }
+
     public void MoveBall(Ball ball, int x, int y)
     {
         var newX = ball.Position.X + x;
@@ -83,39 +95,33 @@ public class LogicApi : ILogicApi
 
     private void Bounce(Ball ball)
     {
-        if (CheckWallCollision(ball.Position.X, ball.Position.Y))
-            ball.Direction = ball.Direction.Invert();
+        if (CheckWallCollision(ball))
+           ball.Direction.Invert();
+        if (CheckBallCollision(ball))
+           ball.Direction.Invert();
     }
 
-    public bool CheckWallCollision(int x, int y)
+    public bool CheckWallCollision(Ball ball)
     {
-        return x <= 0 || x >= _table.Size.X
-                      || y <= 0 || y >= _table.Size.Y;
+        return ball.Position.X <= 0 || ball.Position.X >= _table.Size.X - Constants.RADIUS
+                      || ball.Position.Y <= 0 || ball.Position.Y >= _table.Size.Y - Constants.RADIUS;
     }
 
-    private async Task MoveBallRandomly(Ball ball, Action<Guid> callback)
+    public bool CheckBallCollision(Ball ball)
     {
-        while (_movement)
+        foreach (var b in Balls)
         {
-            switch (ball.Direction)
+            if (b.BallId == ball.BallId) continue;
+            var distance = Math.Sqrt(Math.Pow(b.Position.X - ball.Position.X, 2) + Math.Pow(b.Position.Y - ball.Position.Y, 2));
+
+            if (distance < Constants.RADIUS)
             {
-                case Direction.Up:
-                    MoveBall(ball, 0, 1);
-                    break;
-                case Direction.Down:
-                    MoveBall(ball, 0, -1);
-                    break;
-                case Direction.Right:
-                    MoveBall(ball, 1, 0);
-                    break;
-                case Direction.Left:
-                    MoveBall(ball, -1, 0);
-                    break;
+                return true;
             }
-
-            callback(ball.BallId);
-
-            await Task.Delay(MoveIntervalMs);
         }
+
+        return false;
     }
+
+    
 }

@@ -17,7 +17,7 @@ public class ModelApi(ILogicApi logicApi) : IModelApi
     public void BuildBallModels()
     {
         foreach (var s in logicApi.Balls)
-            ModelBalls.Add(new(s.BallId, s.Position.X, s.Position.Y));
+            ModelBalls.Add(new(s.BallId, s.Position.X, s.Position.Y, s.Radius));
     }
 
     public Ball GetBall(Guid ballId)

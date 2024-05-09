@@ -40,6 +40,4 @@ public class LogicApiTests
         dataApi.Received(numberOfBalls).AddBall(Arg.Any<Ball>());
     }
 
-    // [Test]
-    // public void 
 }

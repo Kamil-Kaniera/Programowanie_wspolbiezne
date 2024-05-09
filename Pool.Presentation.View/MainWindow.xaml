@@ -14,7 +14,7 @@
     <Grid>
         <!-- Lewa strona - przestrzeń do rysowania kul -->
         <Canvas Name="BilliardCanvas" Background="#41654d" Margin="10" VerticalAlignment="Stretch"
-                HorizontalAlignment="Left" Width="470" Height="470">
+                HorizontalAlignment="Left" Width="500" Height="500">
 
             <!-- Do rysowania kul i stołu -->
             <ItemsControl ItemsSource="{Binding Balls}">
@@ -31,7 +31,7 @@
                 </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Ellipse Width="20" Height="20" Fill="#fcad70" />
+                        <Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Fill="#fcad70" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
