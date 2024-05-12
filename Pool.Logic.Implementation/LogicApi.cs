@@ -31,6 +31,7 @@ public class LogicApi : ILogicApi
 
     public void CreateBalls(int numberOfBalls)
     {
+        _dataApi.RemoveAllBalls();
 
         for (var i = 0; i < numberOfBalls; i++)
         {
@@ -38,8 +39,8 @@ public class LogicApi : ILogicApi
             int randomizedX, randomizedY;
             do
             {
-                randomizedX = _rnd.Next(0, _table.Size.Y - (Constants.DIAMETER * Constants.RESCALE));
-                randomizedY = _rnd.Next(0, _table.Size.X - (Constants.DIAMETER * Constants.RESCALE));
+                randomizedX = _rnd.Next(0, Constants.TABLE_X - Constants.DIAMETER) * Constants.RESCALE;
+                randomizedY = _rnd.Next(0, Constants.TABLE_Y - Constants.DIAMETER) * Constants.RESCALE;
             } while (IsBallIntersectingAnyOther(randomizedX, randomizedY, Balls));
 
             var randomizedDirection = new DirectionVector();

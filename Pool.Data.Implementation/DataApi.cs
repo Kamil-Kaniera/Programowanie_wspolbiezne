@@ -26,7 +26,8 @@ public class DataApi(IBallMapper ballMapper, ITableMapper tableMapper) : IDataAp
         var entity = _balls.First(b => b.BallId == ball.BallId);
         entity.PositionX = ball.Position.X;
         entity.PositionY = ball.Position.Y;
-        entity.Direction = ball.Direction;
+        entity.DirectionX = ball.Direction.X;
+        entity.DirectionY = ball.Direction.Y;
     }
 
     public Table GetTable()
