@@ -6,7 +6,7 @@ namespace Pool.Presentation.Model;
 
 public class ModelApi(ILogicApi logicApi) : IModelApi
 {
-    public ObservableCollection<BallModel> ModelBalls { get; } = new();
+    public ObservableCollection<BallModel> ModelBalls { get; } = [];
 
     public async Task ClearBalls()
     {
@@ -17,7 +17,7 @@ public class ModelApi(ILogicApi logicApi) : IModelApi
     public void BuildBallModels()
     {
         foreach (var s in logicApi.Balls)
-            ModelBalls.Add(new(s.BallId, s.Position.X, s.Position.Y, s.Radius));
+            ModelBalls.Add(new(s.BallId, s.Position.X, s.Position.Y, s.Diameter));
     }
 
     public Ball GetBall(Guid ballId)

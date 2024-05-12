@@ -8,8 +8,9 @@ namespace Pool.Common.Model
 {
     public class Constants
     {
-        public const int RADIUS = 20;
+        public const int DIAMETER = 20;
         public const int TABLE_X = 500;
         public const int TABLE_Y = 500;
+        public const int RESCALE = 100;
     }
 }

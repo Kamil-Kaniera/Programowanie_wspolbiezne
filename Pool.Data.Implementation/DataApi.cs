@@ -8,7 +8,7 @@ namespace Pool.Data.Implementation;
 public class DataApi(IBallMapper ballMapper, ITableMapper tableMapper) : IDataApi
 {
     private readonly List<BallEntity> _balls = [];
-    private readonly TableEntity _table = new() { SizeX = Constants.TABLE_X, SizeY = Constants.TABLE_Y };
+    private readonly TableEntity _table = new() { SizeX = Constants.TABLE_X * Constants.RESCALE, SizeY = Constants.TABLE_Y * Constants.RESCALE };
     public IEnumerable<Ball> Balls => _balls.Select(ballMapper.Map);
 
     public void AddBall(Ball ball)

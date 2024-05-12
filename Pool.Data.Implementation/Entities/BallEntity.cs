@@ -8,5 +8,5 @@ public class BallEntity
     public int PositionX { get; set; }
     public int PositionY { get; set; }
     public DirectionVector Direction { get; set; }
-    public int Radius { get; set; }
+    public int Diameter { get; set; }
 }

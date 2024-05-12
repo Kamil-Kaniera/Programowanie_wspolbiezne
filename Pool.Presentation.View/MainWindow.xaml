@@ -4,12 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Pool.Presentation.ViewModel;assembly=Pool.Presentation.ViewModel"
+        xmlns:view="clr-namespace:Pool.Presentation.View"
         mc:Ignorable="d"
         Title="Billiard Table Simulation" Height="600" Width="900">
 
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
+
+    <Window.Resources>
+        <view:CoordinatesConverter x:Key="coordinatesConverter"/>
+    </Window.Resources>
 
     <Grid>
         <!-- Lewa strona - przestrzeń do rysowania kul -->
@@ -25,13 +30,13 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding X}" />
-                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                        <Setter Property="Canvas.Left" Value="{Binding X, Converter={StaticResource coordinatesConverter}}" />
+                        <Setter Property="Canvas.Top" Value="{Binding Y,  Converter={StaticResource coordinatesConverter}}" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Fill="#fcad70" />
+                        <Ellipse Width="{Binding Diameter, Converter={StaticResource coordinatesConverter}}" Height="{Binding Diameter, Converter={StaticResource coordinatesConverter}}" Fill="#fcad70" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -41,7 +46,7 @@
         <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Width="380" Margin="10">
             <TextBlock Text="Liczba kul:" Margin="0,0,0,10" HorizontalAlignment="Center" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Slider Width="250" Minimum="1" Maximum="100" Value="{Binding Count, Mode=TwoWay}" Margin="0,0,0,10" />
+                <Slider Width="250" Minimum="1" Maximum="30" Value="{Binding Count, Mode=TwoWay}" Margin="0,0,0,10" />
                 <TextBlock TextAlignment="Center" Width="50" Text="{Binding Count, Mode=TwoWay}"
                          Margin="20,0,0,10" />
             </StackPanel>

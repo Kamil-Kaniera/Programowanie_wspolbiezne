@@ -16,7 +16,7 @@ public class BallMapper : IBallMapper
                 Y = ball.PositionY
             },
             Direction = ball.Direction,
-            Radius = ball.Radius
+            Diameter = ball.Diameter
         };
     }
 
@@ -28,7 +28,7 @@ public class BallMapper : IBallMapper
             PositionX = ball.Position.X,
             PositionY = ball.Position.Y,
             Direction = ball.Direction,
-            Radius = ball.Radius
+            Diameter = ball.Diameter
         };
     }
 }

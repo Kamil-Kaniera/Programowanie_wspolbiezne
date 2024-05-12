@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Pool.Presentation.ViewModel;
 
 namespace Pool.Presentation.View;
 
@@ -10,5 +11,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        DataContext = new MainViewModel();
     }
 }
