@@ -126,12 +126,15 @@ public class LogicApi : ILogicApi
 
     public void CheckWallCollision(Ball ball)
     {
-        if (ball.Position.X <= 0 || ball.Position.X >= _table.Size.X - ball.Diameter)
-            ball.Direction.X = - ball.Direction.X;
-        
-        if (ball.Position.Y <= 0 || ball.Position.Y >= _table.Size.Y - ball.Diameter)
-            ball.Direction.Y = - ball.Direction.Y;
-        
+        if (ball.Position.X <= 0)
+            ball.Direction.X = Math.Abs(ball.Direction.X);
+        if (ball.Position.Y <= 0)
+            ball.Direction.Y = Math.Abs(ball.Direction.Y);
+
+        if (ball.Position.X >= _table.Size.X - ball.Diameter)
+            ball.Direction.X = - Math.Abs(ball.Direction.X);
+        if (ball.Position.Y >= _table.Size.Y - ball.Diameter)
+            ball.Direction.Y = - Math.Abs(ball.Direction.Y);
     }
 
     public bool CheckBallCollision(Ball ball)
@@ -184,6 +187,9 @@ public class LogicApi : ILogicApi
         ball1.Direction.Y = (int)newVy1;
         ball2.Direction.X = (int)newVx2;
         ball2.Direction.Y = (int)newVy2;
+
+        CheckWallCollision(ball1);
+        CheckWallCollision(ball2);
     }
 
 
