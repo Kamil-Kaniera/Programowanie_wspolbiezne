@@ -31,23 +31,48 @@ public class LogicApi : ILogicApi
 
     public void CreateBalls(int numberOfBalls)
     {
-        _dataApi.RemoveAllBalls();
+
         for (var i = 0; i < numberOfBalls; i++)
         {
-            // Randomize starting position
-            var randomizedX = _rnd.Next(0, _table.Size.Y - (Constants.DIAMETER * Constants.RESCALE));
-            var randomizedY = _rnd.Next(0, _table.Size.X - (Constants.DIAMETER * Constants.RESCALE));
+            // Randomizuj początkową pozycję
+            int randomizedX, randomizedY;
+            do
+            {
+                randomizedX = _rnd.Next(0, _table.Size.Y - (Constants.DIAMETER * Constants.RESCALE));
+                randomizedY = _rnd.Next(0, _table.Size.X - (Constants.DIAMETER * Constants.RESCALE));
+            } while (IsBallIntersectingAnyOther(randomizedX, randomizedY, Balls));
+
             var randomizedDirection = new DirectionVector();
 
             Ball ball = new()
             {
-                BallId = Guid.NewGuid(), Position = new() { X = randomizedX, Y = randomizedY },
+                BallId = Guid.NewGuid(),
+                Position = new() { X = randomizedX, Y = randomizedY },
                 Direction = randomizedDirection
             };
 
             _dataApi.AddBall(ball);
         }
     }
+
+    private bool IsBallIntersectingAnyOther(int x, int y, IEnumerable<Ball> existingBalls)
+    {
+        foreach (var existingBall in existingBalls)
+        {
+            lock (existingBall)
+            {
+                if (Math.Sqrt((existingBall.Position.X - x) * (existingBall.Position.X - x) +
+                              (existingBall.Position.Y - y) * (existingBall.Position.Y - y)) <=
+                    existingBall.Diameter) // Kulki się stykają
+                {
+
+                    return true; 
+                }
+            }
+        }
+        return false;
+    }
+    
 
     public void StartMovement(Action<Guid> ballMovedCallback)
     {
@@ -111,30 +136,33 @@ public class LogicApi : ILogicApi
 
     public bool CheckBallCollision(Ball ball)
     {
-        lock (ball)
+        bool collisionDetected = false;
+
+        foreach (var b in Balls)
         {
-            foreach (var b in Balls)
+            if (b.BallId == ball.BallId) continue;
+
+            var distance = Math.Sqrt((b.Position.X - ball.Position.X) * (b.Position.X - ball.Position.X) +
+                                     (b.Position.Y - ball.Position.Y) * (b.Position.Y - ball.Position.Y));
+
+
+            if (distance <= ball.Diameter) // Kulki się stykają
             {
-                if (b.BallId == ball.BallId) continue;
-
-                var distance = Math.Sqrt(Math.Pow(b.Position.X - ball.Position.X, 2) +
-                                         Math.Pow(b.Position.Y - ball.Position.Y, 2));
-
-                if (distance > ball.Diameter) continue;
-
-
+                // Umieść kule w sekcji krytycznej
                 lock (b)
                 {
-                    HandleCollision(b, ball);
+                    lock (ball)
+                    {
+                        HandleCollision(b, ball);
+                    }
                 }
-
-
-                return true;
+                collisionDetected = true;
             }
-
-            return false;
         }
+
+        return collisionDetected;
     }
+
 
     public void HandleCollision(Ball ball1, Ball ball2)
     {
