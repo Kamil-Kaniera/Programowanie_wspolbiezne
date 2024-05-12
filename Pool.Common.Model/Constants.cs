@@ -12,5 +12,6 @@ namespace Pool.Common.Model
         public const int TABLE_X = 500;
         public const int TABLE_Y = 500;
         public const int RESCALE = 100;
+        public const int SPEED = 2;
     }
 }

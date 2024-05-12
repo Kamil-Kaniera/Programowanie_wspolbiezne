@@ -11,6 +11,7 @@ namespace Pool.Common.Model
         private readonly Random _rnd = new();
         private int _x = 0;
         private int _y = 0;
+        private const double TwoPi = 2 * Math.PI;
 
         public int X
         {
@@ -42,10 +43,12 @@ namespace Pool.Common.Model
 
         public DirectionVector()
         {
+            double angle = _rnd.NextDouble() * TwoPi;
+
             while (X == 0 && Y == 0)
             {
-                X = _rnd.Next(-1, 1) * Constants.RESCALE;
-                Y = _rnd.Next(-1, 1) * Constants.RESCALE;
+                X = (int)(Math.Cos(angle) * Constants.RESCALE) * Constants.SPEED;
+                Y = (int)(Math.Sin(angle) * Constants.RESCALE) * Constants.SPEED;
             }
         }
     }
