@@ -10,16 +10,8 @@ public class BallMapper : IBallMapper
         return new()
         {
             BallId = ball.BallId,
-            Position = new()
-            {
-                X = ball.PositionX,
-                Y = ball.PositionY
-            },
-            Direction = new()
-            {
-                X = ball.DirectionX,
-                Y = ball.DirectionY
-            },
+            Position = new(ball.PositionX, ball.PositionY),
+            Direction = new(ball.DirectionX, ball.DirectionY),
             Diameter = ball.Diameter
         };
     }

@@ -35,7 +35,7 @@ public class LogicApi : ILogicApi
 
         for (var i = 0; i < numberOfBalls; i++)
         {
-            // Randomizuj początkową pozycję
+            // Randomize starting position
             int randomizedX, randomizedY;
             do
             {
@@ -43,20 +43,19 @@ public class LogicApi : ILogicApi
                 randomizedY = _rnd.Next(0, Constants.TABLE_Y - Constants.DIAMETER) * Constants.RESCALE;
             } while (IsBallIntersectingAnyOther(randomizedX, randomizedY, Balls));
 
-            var randomizedDirection = new DirectionVector();
 
             Ball ball = new()
             {
                 BallId = Guid.NewGuid(),
-                Position = new() { X = randomizedX, Y = randomizedY },
-                Direction = randomizedDirection
-            };
+                Position = new(randomizedX, randomizedY),
+                Direction = new()
+        };
 
             _dataApi.AddBall(ball);
         }
     }
 
-    private bool IsBallIntersectingAnyOther(int x, int y, IEnumerable<Ball> existingBalls)
+    private static bool IsBallIntersectingAnyOther(int x, int y, IEnumerable<Ball> existingBalls)
     {
         foreach (var existingBall in existingBalls)
         {
@@ -64,7 +63,7 @@ public class LogicApi : ILogicApi
             {
                 if (Math.Sqrt((existingBall.Position.X - x) * (existingBall.Position.X - x) +
                               (existingBall.Position.Y - y) * (existingBall.Position.Y - y)) <=
-                    existingBall.Diameter) // Kulki się stykają
+                    existingBall.Diameter) // Balls are touching
                 {
 
                     return true; 
@@ -108,37 +107,28 @@ public class LogicApi : ILogicApi
         }
     }
 
-    public void MoveBall(Ball ball)
+    private void MoveBall(Ball ball)
     {
-        var newX = ball.Position.X + ball.Direction.X;
-        var newY = ball.Position.Y + ball.Direction.Y;
-        var oldPosition = ball.Position;
-        ball.Position = new() { X = newX, Y = newY };
-
-        if (CheckBallCollision(ball))
+        // Lock the ball before any changes
+        lock (ball)
         {
-            ball.Position = new (oldPosition.X + ball.Direction.X, oldPosition.Y + ball.Direction.Y);
+            var oldPosition = ball.Position;
+
+            ball.MoveSelf();
+
+            if (CheckBallCollision(ball))
+            {
+                ball.Position = new(oldPosition.X, oldPosition.Y);
+                ball.MoveSelf();
+            }
+
+            ball.HandleWallCollision(_table);
+
+            _dataApi.UpdateBall(ball);
         }
-
-        CheckWallCollision(ball);
-
-        _dataApi.UpdateBall(ball);
     }
 
-    public void CheckWallCollision(Ball ball)
-    {
-        if (ball.Position.X <= 0)
-            ball.Direction.X = Math.Abs(ball.Direction.X);
-        if (ball.Position.Y <= 0)
-            ball.Direction.Y = Math.Abs(ball.Direction.Y);
-
-        if (ball.Position.X >= _table.Size.X - ball.Diameter)
-            ball.Direction.X = - Math.Abs(ball.Direction.X);
-        if (ball.Position.Y >= _table.Size.Y - ball.Diameter)
-            ball.Direction.Y = - Math.Abs(ball.Direction.Y);
-    }
-
-    public bool CheckBallCollision(Ball ball)
+    private bool CheckBallCollision(Ball ball)
     {
         bool collisionDetected = false;
 
@@ -150,15 +140,12 @@ public class LogicApi : ILogicApi
                                      (b.Position.Y - ball.Position.Y) * (b.Position.Y - ball.Position.Y));
 
 
-            if (distance <= ball.Diameter) // Kulki się stykają
+            if (distance <= ball.Diameter)
             {
-                // Umieść kule w sekcji krytycznej
+                // Lock the other ball
                 lock (b)
                 {
-                    lock (ball)
-                    {
-                        HandleCollision(b, ball);
-                    }
+                       ball.HandleBallCollision(b);
                 }
                 collisionDetected = true;
             }
@@ -166,33 +153,4 @@ public class LogicApi : ILogicApi
 
         return collisionDetected;
     }
-
-
-    public void HandleCollision(Ball ball1, Ball ball2)
-    {
-        double normalX = ball2.Position.X - ball1.Position.X;
-        double normalY = ball2.Position.Y - ball1.Position.Y;
-        double normalLength = Math.Sqrt((normalX * normalX + normalY * normalY));
-        normalX /= normalLength;
-        normalY /= normalLength;
-
-        double dotProduct1 = ball1.Direction.X * normalX + ball1.Direction.Y * normalY;
-        double dotProduct2 = ball2.Direction.X * normalX + ball2.Direction.Y * normalY;
-
-        double newVx1 = ball1.Direction.X - 2 * dotProduct1 * normalX;
-        double newVy1 = ball1.Direction.Y - 2 * dotProduct1 * normalY;
-        double newVx2 = ball2.Direction.X - 2 * dotProduct2 * normalX;
-        double newVy2 = ball2.Direction.Y - 2 * dotProduct2 * normalY;
-
-        ball1.Direction.X = (int)newVx1;
-        ball1.Direction.Y = (int)newVy1;
-        ball2.Direction.X = (int)newVx2;
-        ball2.Direction.Y = (int)newVy2;
-
-        CheckWallCollision(ball1);
-        CheckWallCollision(ball2);
-    }
-
-
-
 }

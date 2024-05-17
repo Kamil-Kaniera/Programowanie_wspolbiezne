@@ -9,47 +9,38 @@ namespace Pool.Common.Model
     public class DirectionVector
     {
         private readonly Random _rnd = new();
-        private int _x = 0;
-        private int _y = 0;
         private const double TwoPi = 2 * Math.PI;
 
-        public int X
-        {
-            get => _x;
-            set
-            {
-                _x = value switch
-                {
-                    >= 0 and < Constants.DIAMETER => Constants.DIAMETER,
-                    <= 0 and > -Constants.DIAMETER => -Constants.DIAMETER,
-                    _ => value
-                };
-            }
-        }
+        public int X { get; }
 
-        public int Y
-        {
-            get => _y;
-            set
-            {
-                _y = value switch
-                {
-                    >= 0 and < Constants.DIAMETER => Constants.DIAMETER,
-                    <= 0 and > -Constants.DIAMETER => -Constants.DIAMETER,
-                    _ => value
-                };
-            }
-        }
+        public int Y { get; }
 
         public DirectionVector()
         {
-            double angle = _rnd.NextDouble() * TwoPi;
+            var angle = _rnd.NextDouble() * TwoPi;
 
             while (X == 0 && Y == 0)
             {
                 X = (int)(Math.Cos(angle) * Constants.RESCALE) * Constants.SPEED;
                 Y = (int)(Math.Sin(angle) * Constants.RESCALE) * Constants.SPEED;
             }
+        }
+
+        public DirectionVector(int x, int y)
+        {
+            X = x switch
+            {
+                >= 0 and < Constants.DIAMETER => Constants.DIAMETER,
+                <= 0 and > -Constants.DIAMETER => -Constants.DIAMETER,
+                _ => x
+            };
+
+            Y = y switch
+            {
+                >= 0 and < Constants.DIAMETER => Constants.DIAMETER,
+                <= 0 and > -Constants.DIAMETER => -Constants.DIAMETER,
+                _ => y
+            };
         }
     }
 }
