@@ -1,30 +1,40 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Pool.Data.Abstract;
-using Pool.Data.Implementation;
+﻿using Pool.Data.Abstract;
 using Pool.Data.Implementation.Mappers;
+using Pool.Data.Implementation;
 using Pool.Logic.Abstract;
 using Pool.Logic.Implementation;
 using Pool.Presentation.Model;
 
-namespace Pool.Presentation.ViewModel;
-
-public class DependencyInjection
+namespace Pool.Presentation.ViewModel
 {
-    static DependencyInjection()
+    public static class DependencyInjection
     {
-        var serviceCollection = new ServiceCollection();
-        ConfigureServices(serviceCollection);
-        Provider = serviceCollection.BuildServiceProvider();
-    }
+        private static readonly Dictionary<Type, Func<object>> Services = [];
 
-    public static IServiceProvider Provider { get; }
+        static DependencyInjection()
+        {
+            // Connect abstraction with its implementation
+            Register<IBallMapper>(() => new BallMapper());
+            Register<ITableMapper>(() => new TableMapper());
+            Register<IDataApi>(() => new DataApi(Get<IBallMapper>(), Get<ITableMapper>()));
+            Register<ILogicApi>(() => new LogicApi(Get<IDataApi>()));
+            Register<IModelApi>(() => new ModelApi(Get<ILogicApi>()));
+        }
 
-    private static void ConfigureServices(IServiceCollection services)
-    {
-        services.AddTransient<IModelApi, ModelApi>();
-        services.AddTransient<ILogicApi, LogicApi>();
-        services.AddTransient<IDataApi, DataApi>();
-        services.AddTransient<IBallMapper, BallMapper>();
-        services.AddTransient<ITableMapper, TableMapper>();
+        public static void Register<T>(Func<object> implementationFactory)
+        {
+            Services[typeof(T)] = implementationFactory;
+        }
+
+        public static T Get<T>()
+        {
+            if (Services.TryGetValue(typeof(T), out var implementationFactory))
+            {
+                return (T)implementationFactory();
+            }
+
+            throw new InvalidOperationException($"No implementation registered for type {typeof(T).FullName}");
+        }
+
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Pool.Common.Model;
+﻿using System.Diagnostics;
+
+namespace Pool.Common.Model;
 
 public class Ball
 {
@@ -7,9 +9,33 @@ public class Ball
     public DirectionVector Direction { get; set; }
     public int Diameter { get; set; } = Constants.DIAMETER * Constants.RESCALE;
 
+    private const int MoveIntervalMs = 10;
+    private readonly Stopwatch _stopwatch = new();
+
     public void MoveSelf()
     {
         Position = new(Position.X + Direction.X, Position.Y + Direction.Y);
+    }
+
+    public async Task MoveBallRandomly(Action<Ball> moveBall, Action<Guid> callback)
+    {
+            // Restart the stopwatch
+            _stopwatch.Restart();
+
+            moveBall(this);
+
+            // Stop the stopwatch and measure time of MoveBall(ball)
+            _stopwatch.Stop();
+
+            callback(BallId);
+
+            var waitingPeriod = 0;
+
+            // Set the waitingPeriod so that all tasks have the same delay 
+            if (MoveIntervalMs - _stopwatch.ElapsedMilliseconds > 0)
+                waitingPeriod = MoveIntervalMs - (int)_stopwatch.ElapsedMilliseconds;
+
+            await Task.Delay(waitingPeriod);
     }
 
     public void HandleBallCollision(Ball otherBall)

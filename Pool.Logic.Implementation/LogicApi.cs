@@ -1,13 +1,12 @@
 ﻿using Pool.Common.Model;
 using Pool.Data.Abstract;
 using Pool.Logic.Abstract;
+using System.Diagnostics;
 
 namespace Pool.Logic.Implementation;
 
 public class LogicApi : ILogicApi
 {
-    private const int MoveIntervalMs = 10;
-
     private readonly IDataApi _dataApi;
     private readonly Random _rnd = new();
     private readonly Table _table;
@@ -49,7 +48,7 @@ public class LogicApi : ILogicApi
                 BallId = Guid.NewGuid(),
                 Position = new(randomizedX, randomizedY),
                 Direction = new()
-        };
+            };
 
             _dataApi.AddBall(ball);
         }
@@ -65,20 +64,20 @@ public class LogicApi : ILogicApi
                               (existingBall.Position.Y - y) * (existingBall.Position.Y - y)) <=
                     existingBall.Diameter) // Balls are touching
                 {
-
-                    return true; 
+                    return true;
                 }
             }
         }
+
         return false;
     }
-    
+
 
     public void StartMovement(Action<Guid> ballMovedCallback)
     {
         _movement = true;
         foreach (var ball in _dataApi.Balls)
-            _tasks.Add(MoveBallRandomly(ball, ballMovedCallback));
+            _tasks.Add(CreateTask(ball, ballMovedCallback));
     }
 
     public async Task StopMovement()
@@ -95,15 +94,11 @@ public class LogicApi : ILogicApi
         _tasks.Clear();
     }
 
-    private async Task MoveBallRandomly(Ball ball, Action<Guid> callback)
+    private async Task CreateTask(Ball ball, Action<Guid> callback)
     {
         while (_movement)
         {
-            MoveBall(ball);
-
-            callback(ball.BallId);
-
-            await Task.Delay(MoveIntervalMs);
+            await ball.MoveBallRandomly(MoveBall, callback);
         }
     }
 
@@ -134,20 +129,21 @@ public class LogicApi : ILogicApi
 
         foreach (var b in Balls)
         {
-            if (b.BallId == ball.BallId) continue;
-
-            var distance = Math.Sqrt((b.Position.X - ball.Position.X) * (b.Position.X - ball.Position.X) +
-                                     (b.Position.Y - ball.Position.Y) * (b.Position.Y - ball.Position.Y));
-
-
-            if (distance <= ball.Diameter)
+            // Lock the other ball
+            lock (b)
             {
-                // Lock the other ball
-                lock (b)
+                if (b.BallId == ball.BallId) continue;
+
+                var distance = Math.Sqrt((b.Position.X - ball.Position.X) * (b.Position.X - ball.Position.X) +
+                                         (b.Position.Y - ball.Position.Y) * (b.Position.Y - ball.Position.Y));
+
+
+                if (distance <= ball.Diameter)
                 {
-                       ball.HandleBallCollision(b);
+                    ball.HandleBallCollision(b);
+
+                    collisionDetected = true;
                 }
-                collisionDetected = true;
             }
         }
 

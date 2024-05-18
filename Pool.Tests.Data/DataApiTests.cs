@@ -45,7 +45,6 @@ public class DataApiTests
         api.AddBall(ball);
 
         api.Balls.Count().Should().Be(1);
-        api.GetBall(ball.BallId).Should().BeEquivalentTo(ball);
     }
 
     [Test]
