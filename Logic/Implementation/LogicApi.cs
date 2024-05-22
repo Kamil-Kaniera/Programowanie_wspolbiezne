@@ -1,7 +1,6 @@
 ﻿using Logic.Abstract;
 using Commons;
 using Data.Abstract;
-using Data.Implementation;
 
 namespace Logic.Implementation
 {
@@ -22,7 +21,7 @@ namespace Logic.Implementation
         {
           //  lock (value)
             {
-                CheckCollision((Ball)value);
+                CheckCollision((IBall)value);
             }
         }
 
@@ -42,10 +41,9 @@ namespace Logic.Implementation
                 } while (IsBallIntersectingAnyOther(randomizedX, randomizedY, LogicBalls));
 
 
-                Ball ball = new(new(randomizedX, randomizedY), new VelocityVector());
+                IBall ball = _dataApi.AddBall(new Position(randomizedX, randomizedY));
                 LogicBall logicBall = new(new(randomizedX, randomizedY));
 
-                _dataApi.AddBall(ball);
                 LogicBalls.Add(logicBall);
 
                 ball.Subscribe(logicBall);
@@ -72,7 +70,7 @@ namespace Logic.Implementation
             return false;
         }
 
-        private void CheckCollision(Ball ball)
+        private void CheckCollision(IBall ball)
         {
            // lock (_ballLock)
             {
@@ -87,7 +85,7 @@ namespace Logic.Implementation
 
                     if (distance <= ball.Diameter)
                     {
-                        HandleBallCollision((Ball)b, ball);
+                        HandleBallCollision(b, ball);
                     }
                 }
                 
@@ -96,7 +94,7 @@ namespace Logic.Implementation
             }
         }
 
-        private void HandleBallCollision(Ball ball, Ball otherBall)
+        private void HandleBallCollision(IBall ball, IBall otherBall)
         {
             double normalX = otherBall.Position.X - ball.Position.X;
             double normalY = otherBall.Position.Y - ball.Position.Y;
@@ -116,7 +114,7 @@ namespace Logic.Implementation
             otherBall.Velocity = new((int)newVx2, (int)newVy2);
         }
 
-        private void HandleWallCollision(Ball ball)
+        private void HandleWallCollision(IBall ball)
         {
             if (ball.Position.X <= 0)
                 ball.Velocity = new(Math.Abs(ball.Velocity.X), ball.Velocity.Y);
@@ -132,12 +130,6 @@ namespace Logic.Implementation
         public void StopMovement()
         {
             LogicBalls.Clear();
-
-            foreach (var ball in _dataApi.Balls )
-            {
-                ball.Dispose();
-            }
-
             _dataApi.RemoveAllBalls();
         }
     }

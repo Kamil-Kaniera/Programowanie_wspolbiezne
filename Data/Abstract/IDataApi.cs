@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Data.Implementation;
+﻿using Commons;
 
 namespace Data.Abstract
 {
     public interface IDataApi
     {
-        void AddBall(Ball ball);
+        IBall AddBall(Position p);
         void RemoveAllBalls();
-        Table GetTable();
+        ITable GetTable();
         List<IBall> Balls { get; }
     }
 }

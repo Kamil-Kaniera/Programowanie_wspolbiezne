@@ -9,17 +9,23 @@ namespace Data.Implementation
         private readonly Table _table = new(new TableSize(Constants.TABLE_X * Constants.RESCALE, Constants.TABLE_Y * Constants.RESCALE));
 
 
-        public void AddBall(Ball ball)
+        public IBall AddBall(Position p)
         {
+            Ball ball = new Ball(p, new VelocityVector());
             Balls.Add(ball);
+            return ball;
         }
 
         public void RemoveAllBalls()
         {
+            foreach (var ball in Balls )
+            {
+                ball.Dispose();
+            }
             Balls.Clear();
         }
 
-        public Table GetTable()
+        public ITable GetTable()
         {
             return _table;
         }
