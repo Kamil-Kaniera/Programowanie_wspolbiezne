@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using System.Windows.Data;
-using Commons;
-using Model;
 
 namespace View
 {
     public class CoordinatesConverter : IValueConverter
     {
+        private const int Rescale = 100;
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (int)value / Constants.RESCALE;
+            return (int)value / Rescale;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

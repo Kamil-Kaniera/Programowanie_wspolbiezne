@@ -1,10 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using Model.Abstract;
+using Model.Implementation;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Model.Abstract;
-using Model.Implementation;
-using Logic.Implementation;
-using Data.Implementation;
 
 namespace ViewModel
 {
@@ -19,7 +17,7 @@ namespace ViewModel
 
         public MainViewModel()
         {
-            _modelApi = DependencyInjection.Get<IModelApi>();
+            _modelApi = new ModelApi();
             _balls = _modelApi.ModelBalls;
             StartCommand = new(Start, () => !GetIsStarted());
             StopCommand = new(Stop, GetIsStarted);

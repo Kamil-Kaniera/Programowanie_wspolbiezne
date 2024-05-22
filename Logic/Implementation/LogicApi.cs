@@ -1,13 +1,30 @@
-﻿using Logic.Abstract;
-using Commons;
+﻿using Data;
 using Data.Abstract;
+using Data.Implementation;
+using Logic.Abstract;
 
 namespace Logic.Implementation
 {
-    public class LogicApi(IDataApi data) : ILogicApi
+    public class LogicApi : ILogicApi
     {
         public List<ILogicBall> LogicBalls { get; } = [];
-        private IDataApi _dataApi = data;
+
+        private readonly IDataApi _dataApi;
+
+        public LogicApi()
+        {
+            _dataApi = new DataApi();
+        }
+
+        public LogicApi(IDataApi data)
+        {
+            _dataApi = data;
+        }
+
+        private const int Rescale = 100;
+        private const int Diameter = 20;
+        private const int TableX = 500;
+        private const int TableY = 500;
 
         private readonly Random _rnd = new();
 
@@ -21,7 +38,7 @@ namespace Logic.Implementation
         {
           //  lock (value)
             {
-                CheckCollision((IBall)value);
+                CheckCollision(value);
             }
         }
 
@@ -36,8 +53,8 @@ namespace Logic.Implementation
                 int randomizedX, randomizedY;
                 do
                 {
-                    randomizedX = _rnd.Next(0, Constants.TABLE_X - Constants.DIAMETER) * Constants.RESCALE;
-                    randomizedY = _rnd.Next(0, Constants.TABLE_Y - Constants.DIAMETER) * Constants.RESCALE;
+                    randomizedX = _rnd.Next(0,TableX - Diameter) * Rescale;
+                    randomizedY = _rnd.Next(0, TableY - Diameter) * Rescale;
                 } while (IsBallIntersectingAnyOther(randomizedX, randomizedY, LogicBalls));
 
 
@@ -59,8 +76,7 @@ namespace Logic.Implementation
                // lock (existingBall)
                 {
                     if (Math.Sqrt((existingBall.Position.X - x) * (existingBall.Position.X - x) +
-                                  (existingBall.Position.Y - y) * (existingBall.Position.Y - y)) <=
-                        existingBall.Diameter) // Balls are touching
+                                  (existingBall.Position.Y - y) * (existingBall.Position.Y - y)) <= Diameter * Rescale) // Balls are touching
                     {
                         return true;
                     }
@@ -83,7 +99,7 @@ namespace Logic.Implementation
                                              (b.Position.Y - ball.Position.Y) * (b.Position.Y - ball.Position.Y));
 
 
-                    if (distance <= ball.Diameter)
+                    if (distance <= Diameter * Rescale)
                     {
                         HandleBallCollision(b, ball);
                     }
@@ -121,9 +137,9 @@ namespace Logic.Implementation
             if (ball.Position.Y <= 0)
                 ball.Velocity = new(ball.Velocity.X, Math.Abs(ball.Velocity.Y));
 
-            if (ball.Position.X >= _dataApi.GetTable().TableSize.X - ball.Diameter)
+            if (ball.Position.X >= _dataApi.GetTable().TableX - Diameter * Rescale)
                 ball.Velocity = new(-Math.Abs(ball.Velocity.X), ball.Velocity.Y);
-            if (ball.Position.Y >= _dataApi.GetTable().TableSize.Y - ball.Diameter)
+            if (ball.Position.Y >= _dataApi.GetTable().TableY - Diameter * Rescale)
                 ball.Velocity = new(ball.Velocity.X, -Math.Abs(ball.Velocity.Y));
         }
 

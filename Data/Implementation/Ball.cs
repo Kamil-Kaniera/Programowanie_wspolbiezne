@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Commons;
 using Data.Abstract;
 
 namespace Data.Implementation
@@ -8,7 +7,6 @@ namespace Data.Implementation
     {
         public Position Position { get; private set; }
         public VelocityVector Velocity { get;  set; }
-        public int Diameter { get; } = Constants.DIAMETER * Constants.RESCALE;
 
         private bool _movement = false;
         private Thread _thread;

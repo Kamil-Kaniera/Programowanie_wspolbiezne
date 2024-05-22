@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{E2B360EB-F77C-45FA-A3D4-59C5E2404160}"
-	ProjectSection(ProjectDependencies) = postProject
-		{238F01F9-80DD-45B9-9A77-32F07C47C0FC} = {238F01F9-80DD-45B9-9A77-32F07C47C0FC}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logic", "Logic\Logic.csproj", "{01D4B2EF-B9C9-4CDC-85A0-C06CC73EA180}"
 EndProject
@@ -25,8 +22,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTest", "DataTest\DataTest.csproj", "{9D3CEF2C-D897-46F9-A226-201990707D69}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicTest", "LogicTest\LogicTest.csproj", "{CF571B15-A9F8-46EF-B1E3-06A38A0CEE28}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Commons", "Commons\Commons.csproj", "{238F01F9-80DD-45B9-9A77-32F07C47C0FC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "View", "View\View.csproj", "{6F834220-E84B-4080-AB5E-568A8A1A3787}"
 EndProject
@@ -65,10 +60,6 @@ Global
 		{CF571B15-A9F8-46EF-B1E3-06A38A0CEE28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF571B15-A9F8-46EF-B1E3-06A38A0CEE28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF571B15-A9F8-46EF-B1E3-06A38A0CEE28}.Release|Any CPU.Build.0 = Release|Any CPU
-		{238F01F9-80DD-45B9-9A77-32F07C47C0FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{238F01F9-80DD-45B9-9A77-32F07C47C0FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{238F01F9-80DD-45B9-9A77-32F07C47C0FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{238F01F9-80DD-45B9-9A77-32F07C47C0FC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6F834220-E84B-4080-AB5E-568A8A1A3787}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6F834220-E84B-4080-AB5E-568A8A1A3787}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F834220-E84B-4080-AB5E-568A8A1A3787}.Release|Any CPU.ActiveCfg = Release|Any CPU

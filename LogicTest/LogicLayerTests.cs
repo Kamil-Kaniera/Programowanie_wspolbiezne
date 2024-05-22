@@ -1,13 +1,16 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Logic.Implementation;
-using Commons;
+﻿using Data;
 using Data.Abstract;
+using Logic.Implementation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
 namespace LogicTest
 {
     public class LogicLayerTests
     {
+        private const int Rescale = 100;
+        private const int TableX = 500;
+        private const int TableY = 500;
         [TestClass]
         public class LogicApiTests
         {
@@ -46,21 +49,21 @@ namespace LogicTest
             public void CheckTableDimensions_AreCorrect()
             {
                 var table = _fakeDataApi.GetTable();
-                Assert.AreEqual(Constants.TABLE_X * Constants.RESCALE, table.TableSize.X);
-                Assert.AreEqual(Constants.TABLE_Y * Constants.RESCALE, table.TableSize.Y);
+                Assert.AreEqual(TableX * Rescale, table.TableX);
+                Assert.AreEqual(TableY * Rescale, table.TableY);
             }
         }
         
-        internal class FakeTable(TableSize size) : ITable
+        internal class FakeTable(int x, int y) : ITable
         {
-            public TableSize TableSize { get; } = size;
+            public int TableX { get; } = x;
+            public int TableY { get; } = y;
         }
 
         internal class FakeBall : IBall
         {
             public Position Position { get; set; }
             public VelocityVector Velocity { get; set; }
-            public int Diameter { get; } = Constants.DIAMETER * Constants.RESCALE;
 
             public FakeBall(Position position, VelocityVector velocity)
             {
@@ -80,7 +83,7 @@ namespace LogicTest
         internal class FakeDataApi : IDataApi
         {
             public List<IBall> Balls { get; } = [];
-            private readonly FakeTable _table = new(new TableSize(Constants.TABLE_X * Constants.RESCALE, Constants.TABLE_Y * Constants.RESCALE));
+            private readonly FakeTable _table = new(TableX * Rescale, TableY * Rescale);
 
             
             public IBall AddBall(Position p)

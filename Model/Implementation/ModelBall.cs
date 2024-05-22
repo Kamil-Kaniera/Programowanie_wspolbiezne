@@ -1,16 +1,17 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Commons;
-using Logic.Abstract;
+﻿using Logic.Abstract;
 using Model.Abstract;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Model.Implementation
 {
     public class ModelBall : IModelBall
     {
+        private const int Rescale = 100;
+
         private int _x;
         private int _y;
-        public int Diameter { get; } = Constants.DIAMETER * Constants.RESCALE;
+        public int Diameter { get; } = 20 * Rescale;
 
         public ModelBall(int x, int y)
         {

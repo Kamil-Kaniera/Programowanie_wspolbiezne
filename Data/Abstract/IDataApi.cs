@@ -1,6 +1,4 @@
-﻿using Commons;
-
-namespace Data.Abstract
+﻿namespace Data.Abstract
 {
     public interface IDataApi
     {

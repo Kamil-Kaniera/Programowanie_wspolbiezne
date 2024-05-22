@@ -1,4 +1,4 @@
-﻿using Commons;
+﻿using Data;
 using Data.Abstract;
 using Logic.Abstract;
 
@@ -6,7 +6,10 @@ namespace Logic.Implementation
 {
     internal class LogicBall(Position p) : ILogicBall
     {
-        private Position _position;
+        private Position _position = p;
+
+        private const int Rescale = 100;
+        private const int Diameter = 20 * Rescale;
 
         public Position Position
         {
@@ -20,7 +23,6 @@ namespace Logic.Implementation
             }
 
         }
-        public int Diameter { get; } = Constants.DIAMETER;
 
         private readonly List<IObserver<ILogicBall>> _observers = [];
 

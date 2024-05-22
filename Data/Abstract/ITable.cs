@@ -1,9 +1,8 @@
-﻿using Commons;
-
-namespace Data.Abstract
+﻿namespace Data.Abstract
 {
     public interface ITable
     {
-        public TableSize TableSize { get; }
+        public int TableX { get; }
+        public int TableY { get; }
     }
 }

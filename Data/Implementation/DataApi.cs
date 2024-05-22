@@ -1,12 +1,15 @@
-﻿using Commons;
-using Data.Abstract;
+﻿using Data.Abstract;
 
 namespace Data.Implementation
 {
     public class DataApi : IDataApi
     {
+        private const int Rescale = 100;
+        private const int TableX = 500;
+        private const int TableY = 500;
+
         public List<IBall> Balls { get; } = [];
-        private readonly Table _table = new(new TableSize(Constants.TABLE_X * Constants.RESCALE, Constants.TABLE_Y * Constants.RESCALE));
+        private readonly Table _table = new(TableX * Rescale, TableY * Rescale);
 
 
         public IBall AddBall(Position p)

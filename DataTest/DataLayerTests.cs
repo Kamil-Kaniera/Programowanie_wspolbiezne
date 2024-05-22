@@ -1,9 +1,10 @@
-﻿namespace DataTest
+﻿using Data;
+
+namespace DataTest
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Data.Abstract;
     using Data.Implementation;
-    using Commons;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class DataLayerTests
@@ -12,6 +13,10 @@
         [TestClass]
         public class DataApiTests
         {
+            private const int Rescale = 100;
+            private const int TableX = 500 * Rescale;
+            private const int TableY = 500 * Rescale;
+
             private DataApi _dataApi;
 
             [TestInitialize]
@@ -53,8 +58,8 @@
             {
                 var table = _dataApi.GetTable();
                 Assert.IsNotNull(table);
-                Assert.AreEqual(Constants.TABLE_X * Constants.RESCALE, table.TableSize.X);
-                Assert.AreEqual(Constants.TABLE_Y * Constants.RESCALE, table.TableSize.Y);
+                Assert.AreEqual(TableX, table.TableX);
+                Assert.AreEqual(TableY, table.TableY);
             }
         }
 
@@ -78,7 +83,6 @@
 
                 Assert.AreEqual(position, _ball.Position);
                 Assert.AreEqual(velocity, _ball.Velocity);
-                Assert.AreEqual(Constants.DIAMETER * Constants.RESCALE, _ball.Diameter);
             }
         }
     }

@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Commons
+﻿namespace Data
 {
     public class VelocityVector
     {
         private readonly Random _rnd = new();
         private const double TwoPi = 2 * Math.PI;
+
+        private const int Rescale = 100;
+        private const int Diameter = 20;
+        private const int Speed = 2;
 
         public int X { get; }
 
@@ -21,8 +19,8 @@ namespace Commons
 
             while (X == 0 && Y == 0)
             {
-                X = (int)(Math.Cos(angle) * Constants.RESCALE) * Constants.SPEED;
-                Y = (int)(Math.Sin(angle) * Constants.RESCALE) * Constants.SPEED;
+                X = (int)(Math.Cos(angle) * Rescale) * Speed;
+                Y = (int)(Math.Sin(angle) * Rescale) * Speed;
             }
         }
 
@@ -30,15 +28,15 @@ namespace Commons
         {
             X = x switch
             {
-                >= 0 and < Constants.DIAMETER => Constants.DIAMETER,
-                <= 0 and > -Constants.DIAMETER => -Constants.DIAMETER,
+                >= 0 and < Diameter => Diameter,
+                <= 0 and > -Diameter => -Diameter,
                 _ => x
             };
 
             Y = y switch
             {
-                >= 0 and < Constants.DIAMETER => Constants.DIAMETER,
-                <= 0 and > -Constants.DIAMETER => -Constants.DIAMETER,
+                >= 0 and < Diameter => Diameter,
+                <= 0 and > -Diameter => -Diameter,
                 _ => y
             };
         }

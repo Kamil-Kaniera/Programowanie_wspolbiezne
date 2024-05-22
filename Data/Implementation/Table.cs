@@ -1,10 +1,10 @@
-﻿using Commons;
-using Data.Abstract;
+﻿using Data.Abstract;
 
 namespace Data.Implementation
 {
-    public class Table(TableSize size) : ITable
+    public class Table(int x, int y) : ITable
     {
-        public TableSize TableSize { get; } = size;
+        public int TableX { get; } = x;
+        public int TableY { get; } = y;
     }
 }
