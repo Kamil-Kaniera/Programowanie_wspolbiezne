@@ -46,7 +46,7 @@
         <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Width="380" Margin="10">
             <TextBlock Text="Liczba kul:" Margin="0,0,0,10" HorizontalAlignment="Center" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Slider Width="250" Minimum="1" Maximum="30" Value="{Binding Count, Mode=TwoWay}" Margin="0,0,0,10" />
+                <Slider Width="250" Minimum="1" Maximum="15" Value="{Binding Count, Mode=TwoWay}" Margin="0,0,0,10" />
                 <TextBlock TextAlignment="Center" Width="50" Text="{Binding Count, Mode=TwoWay}"
                          Margin="20,0,0,10" />
             </StackPanel>

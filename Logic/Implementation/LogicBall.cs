@@ -8,16 +8,11 @@ namespace Logic.Implementation
     {
         private Position _position = p;
 
-        private const int Rescale = 100;
-        private const int Diameter = 20 * Rescale;
-
         public Position Position
         {
             get => _position;
             private set
             {
-                
-
                 _position = value;
                 NotifyObservers();
             }

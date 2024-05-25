@@ -28,7 +28,8 @@ namespace Logic.Implementation
 
         private readonly Random _rnd = new();
 
-        private readonly Object _ballLock = new();
+        private readonly Object _lock = new();
+        private readonly Object _ballsLock = new();
 
         public void OnCompleted() { }
 
@@ -36,7 +37,7 @@ namespace Logic.Implementation
 
         public void OnNext(IBall value)
         {
-          //  lock (value)
+            lock (_lock)
             {
                 CheckCollision(value);
             }
@@ -57,8 +58,9 @@ namespace Logic.Implementation
                     randomizedY = _rnd.Next(0, TableY - Diameter) * Rescale;
                 } while (IsBallIntersectingAnyOther(randomizedX, randomizedY, LogicBalls));
 
+                var position = new Position(randomizedX, randomizedY);
 
-                IBall ball = _dataApi.AddBall(new Position(randomizedX, randomizedY));
+                IBall ball = _dataApi.AddBall(position);
                 LogicBall logicBall = new(new(randomizedX, randomizedY));
 
                 LogicBalls.Add(logicBall);
@@ -69,17 +71,20 @@ namespace Logic.Implementation
             }
         }
 
-        private static bool IsBallIntersectingAnyOther(int x, int y, IList<ILogicBall> existingBalls)
+        private bool IsBallIntersectingAnyOther(int x, int y, IList<ILogicBall> existingBalls)
         {
-            foreach (var existingBall in existingBalls)
+            lock (_lock)
             {
-               // lock (existingBall)
+                foreach (var existingBall in existingBalls)
                 {
+
                     if (Math.Sqrt((existingBall.Position.X - x) * (existingBall.Position.X - x) +
-                                  (existingBall.Position.Y - y) * (existingBall.Position.Y - y)) <= Diameter * Rescale) // Balls are touching
+                                  (existingBall.Position.Y - y) * (existingBall.Position.Y - y)) <=
+                        Diameter * Rescale) // Balls are touching
                     {
                         return true;
                     }
+
                 }
             }
 
@@ -88,11 +93,18 @@ namespace Logic.Implementation
 
         private void CheckCollision(IBall ball)
         {
-           // lock (_ballLock)
+            lock (_lock)
             {
-                foreach (var b in _dataApi.Balls)
+                List<IBall> ballsCopy;
+                lock (_ballsLock)
                 {
+                    ballsCopy = [];
+                    foreach (var apiBall in _dataApi.Balls) ballsCopy.Add(apiBall);
+                }                                                 
                 
+                foreach (var b in ballsCopy)
+                {
+                    if (b?.Position == null || ball.Position == null) continue;
                     if (b.Position.X == ball.Position.X && b.Position.Y == ball.Position.Y) continue;
 
                     var distance = Math.Sqrt((b.Position.X - ball.Position.X) * (b.Position.X - ball.Position.X) +
