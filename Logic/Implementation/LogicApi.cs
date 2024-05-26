@@ -94,9 +94,11 @@ namespace Logic.Implementation
         private void CheckCollision(IBall ball)
         {
             List<IBall> ballsCopy;
-            
-            ballsCopy = new List<IBall>(_dataApi.Balls);
- 
+
+            lock (_ballsLock)
+            {
+                ballsCopy = new List<IBall>(_dataApi.Balls);
+            }
 
             foreach (var b in ballsCopy)
             {

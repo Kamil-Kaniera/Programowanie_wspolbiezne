@@ -12,7 +12,7 @@ namespace Data.Implementation
         private bool _movement = false;
         private Thread _thread;
 
-        private const int MoveIntervalMs = 2;
+        private const int MoveIntervalMs = 10;
         private readonly Stopwatch _stopwatch = new();
 
         private bool _disposed = false;
@@ -37,7 +37,7 @@ namespace Data.Implementation
                 // Restart the stopwatch
                 _stopwatch.Restart();
 
-                MoveSelf(MoveIntervalMs / 2);
+                MoveSelf(1);
 
                 // Stop the stopwatch and measure time of MoveSelf()
                 _stopwatch.Stop();
