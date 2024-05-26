@@ -1,4 +1,6 @@
-﻿using Data;
+﻿using System;
+using System.Collections.Generic;
+using Data;
 using Data.Abstract;
 using Data.Implementation;
 using Logic.Abstract;
@@ -7,8 +9,8 @@ namespace Logic.Implementation
 {
     public class LogicApi : ILogicApi
     {
-        public List<ILogicBall> LogicBalls { get; } = [];
-        private List<Guid> BallsId = [];
+        public List<ILogicBall> LogicBalls { get; } = new();
+        private List<(Guid, Guid)> BallsId = new();
 
         private readonly IDataApi _dataApi;
 
@@ -29,8 +31,8 @@ namespace Logic.Implementation
 
         private readonly Random _rnd = new();
 
-        private readonly Object _lock = new();
-        private readonly Object _ballsLock = new();
+        private readonly object _lock = new();
+        private readonly object _ballsLock = new();
 
         public void OnCompleted() { }
 
@@ -40,13 +42,14 @@ namespace Logic.Implementation
         {
             lock (_lock)
             {
-                if (!BallsId.Contains(value.BallId))
+                var ballPairs = BallsId.FindAll(pair => pair.Item1 == value.BallId || pair.Item2 == value.BallId);
+                if (ballPairs.Count == 0)
                 {
                     CheckCollision(value);
                 }
                 else
                 {
-                    BallsId.Remove(value.BallId);
+                    BallsId.RemoveAll(pair => pair.Item1 == value.BallId || pair.Item2 == value.BallId);
                 }
             }
         }
@@ -62,20 +65,19 @@ namespace Logic.Implementation
                 int randomizedX, randomizedY;
                 do
                 {
-                    randomizedX = _rnd.Next(0,TableX - Diameter) * Rescale;
+                    randomizedX = _rnd.Next(0, TableX - Diameter) * Rescale;
                     randomizedY = _rnd.Next(0, TableY - Diameter) * Rescale;
                 } while (IsBallIntersectingAnyOther(randomizedX, randomizedY, LogicBalls));
 
                 var position = new Position(randomizedX, randomizedY);
 
                 IBall ball = _dataApi.AddBall(position);
-                LogicBall logicBall = new(new(randomizedX, randomizedY));
+                LogicBall logicBall = new(new Position(randomizedX, randomizedY));
 
                 LogicBalls.Add(logicBall);
 
                 ball.Subscribe(logicBall);
                 ball.Subscribe(this);
-
             }
         }
 
@@ -85,14 +87,12 @@ namespace Logic.Implementation
             {
                 foreach (var existingBall in existingBalls)
                 {
-
                     if (Math.Sqrt((existingBall.Position.X - x) * (existingBall.Position.X - x) +
                                   (existingBall.Position.Y - y) * (existingBall.Position.Y - y)) <=
                         Diameter * Rescale) // Balls are touching
                     {
                         return true;
                     }
-
                 }
             }
 
@@ -103,10 +103,9 @@ namespace Logic.Implementation
         {
             List<IBall> ballsCopy;
             
-            ballsCopy = [];
-            foreach (var apiBall in _dataApi.Balls) ballsCopy.Add(apiBall);
-                                                            
-            
+            ballsCopy = new List<IBall>(_dataApi.Balls);
+ 
+
             foreach (var b in ballsCopy)
             {
                 if (b?.Position == null || ball.Position == null) continue;
@@ -115,16 +114,20 @@ namespace Logic.Implementation
                 var distance = Math.Sqrt((b.Position.X - ball.Position.X) * (b.Position.X - ball.Position.X) +
                                          (b.Position.Y - ball.Position.Y) * (b.Position.Y - ball.Position.Y));
 
-
                 if (distance <= Diameter * Rescale)
                 {
-                    HandleBallCollision(b, ball);
+                    var pair = (ball.BallId, b.BallId);
+                    var reversePair = (b.BallId, ball.BallId);
+
+                    if (!BallsId.Contains(pair) && !BallsId.Contains(reversePair))
+                    {
+                        HandleBallCollision(b, ball);
+                        BallsId.Add(pair);
+                    }
                 }
             }
-            
 
             HandleWallCollision(ball);
-            
         }
 
         private void HandleBallCollision(IBall ball, IBall otherBall)
@@ -145,7 +148,6 @@ namespace Logic.Implementation
 
             ball.Velocity = new((int)newVx1, (int)newVy1);
             otherBall.Velocity = new((int)newVx2, (int)newVy2);
-            BallsId.Add(otherBall.BallId);
         }
 
         private void HandleWallCollision(IBall ball)

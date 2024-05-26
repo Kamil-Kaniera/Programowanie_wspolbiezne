@@ -23,7 +23,7 @@ namespace Data.Implementation
         {
             Position = p;
             Velocity = v;
-            BallId = new Guid();
+            BallId = Guid.NewGuid();
             _movement = true;
             _thread = new Thread(Run);
             _thread.Start();
