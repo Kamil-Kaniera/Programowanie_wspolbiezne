@@ -1,14 +1,13 @@
-﻿using Data;
-using Data.Abstract;
+﻿using Data.Abstract;
 using Logic.Abstract;
 
 namespace Logic.Implementation
 {
-    internal class LogicBall(Position p) : ILogicBall
+    internal class LogicBall(LogicPosition p) : ILogicBall
     {
-        private Position _position = p;
+        private LogicPosition _position = p;
 
-        public Position Position
+        public LogicPosition Position
         {
             get => _position;
             private set
@@ -35,7 +34,7 @@ namespace Logic.Implementation
 
         public void OnNext(IBall value)
         {
-            Position = value.Position;
+            Position = new(value.Position.X, value.Position.Y);
         }
 
         public IDisposable Subscribe(IObserver<ILogicBall> observer)

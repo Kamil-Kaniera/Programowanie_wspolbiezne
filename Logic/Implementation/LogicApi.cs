@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Data;
+﻿using Data;
 using Data.Abstract;
 using Data.Implementation;
 using Logic.Abstract;
@@ -64,7 +62,7 @@ namespace Logic.Implementation
                 var position = new Position(randomizedX, randomizedY);
 
                 IBall ball = _dataApi.AddBall(position);
-                LogicBall logicBall = new(new Position(randomizedX, randomizedY));
+                LogicBall logicBall = new(new LogicPosition(randomizedX, randomizedY));
 
                 LogicBalls.Add(logicBall);
 
