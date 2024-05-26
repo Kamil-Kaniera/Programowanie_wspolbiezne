@@ -42,15 +42,7 @@ namespace Logic.Implementation
         {
             lock (_lock)
             {
-                var ballPairs = BallsId.FindAll(pair => pair.Item1 == value.BallId || pair.Item2 == value.BallId);
-                if (ballPairs.Count == 0)
-                {
-                    CheckCollision(value);
-                }
-                else
-                {
-                    BallsId.RemoveAll(pair => pair.Item1 == value.BallId || pair.Item2 == value.BallId);
-                }
+                CheckCollision(value);
             }
         }
 
@@ -119,14 +111,21 @@ namespace Logic.Implementation
                     var pair = (ball.BallId, b.BallId);
                     var reversePair = (b.BallId, ball.BallId);
 
-                    if (!BallsId.Contains(pair) && !BallsId.Contains(reversePair))
+                    if (BallsId.Contains(pair) || BallsId.Contains(reversePair))
                     {
-                        HandleBallCollision(b, ball);
-                        BallsId.Add(pair);
+                        // If exact pair already exists, do nothing
+                        continue;
                     }
+                    
+                    // Remove any existing pairs containing ball.BallId or b.BallId
+                    BallsId.RemoveAll(p => p.Item1 == ball.BallId || p.Item2 == ball.BallId || p.Item1 == b.BallId || p.Item2 == b.BallId);
+
+                    // Add new pair
+                    BallsId.Add(pair);
+                    
+                    HandleBallCollision(b, ball);
                 }
             }
-
             HandleWallCollision(ball);
         }
 
@@ -152,15 +151,23 @@ namespace Logic.Implementation
 
         private void HandleWallCollision(IBall ball)
         {
-            if (ball.Position.X <= 0)
-                ball.Velocity = new(Math.Abs(ball.Velocity.X), ball.Velocity.Y);
-            if (ball.Position.Y <= 0)
-                ball.Velocity = new(ball.Velocity.X, Math.Abs(ball.Velocity.Y));
+            bool collisionOccurred = false;
 
-            if (ball.Position.X >= _dataApi.GetTable().TableX - Diameter * Rescale)
-                ball.Velocity = new(-Math.Abs(ball.Velocity.X), ball.Velocity.Y);
-            if (ball.Position.Y >= _dataApi.GetTable().TableY - Diameter * Rescale)
-                ball.Velocity = new(ball.Velocity.X, -Math.Abs(ball.Velocity.Y));
+            if (ball.Position.X <= 0 || ball.Position.X >= _dataApi.GetTable().TableX - Diameter * Rescale)
+            {
+                ball.Velocity = new(Math.Abs(ball.Velocity.X) * (ball.Position.X <= 0 ? 1 : -1), ball.Velocity.Y);
+                collisionOccurred = true;
+            }
+            if (ball.Position.Y <= 0 || ball.Position.Y >= _dataApi.GetTable().TableY - Diameter * Rescale)
+            {
+                ball.Velocity = new(ball.Velocity.X, Math.Abs(ball.Velocity.Y) * (ball.Position.Y <= 0 ? 1 : -1));
+                collisionOccurred = true;
+            }
+
+            if (collisionOccurred)
+            {
+                BallsId.RemoveAll(p => p.Item1 == ball.BallId || p.Item2 == ball.BallId);
+            }
         }
 
         public void StopMovement()
