@@ -7,6 +7,7 @@ namespace Data.Implementation
     {
         public Position Position { get; private set; }
         public VelocityVector Velocity { get;  set; }
+        public Guid BallId { get; }
 
         private bool _movement = false;
         private Thread _thread;
@@ -22,6 +23,7 @@ namespace Data.Implementation
         {
             Position = p;
             Velocity = v;
+            BallId = new Guid();
             _movement = true;
             _thread = new Thread(Run);
             _thread.Start();
@@ -53,12 +55,8 @@ namespace Data.Implementation
 
         private void MoveSelf(int time)
         {
-           // lock (this)
-            {
-                Position = new(Position.X + (Velocity.X * time), Position.Y + (Velocity.Y * time));
-                NotifyObservers();
-            }
-          
+            Position = new(Position.X + (Velocity.X * time), Position.Y + (Velocity.Y * time));
+            NotifyObservers();
         }
 
         private void NotifyObservers()

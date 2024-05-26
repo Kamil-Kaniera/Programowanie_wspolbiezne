@@ -64,6 +64,7 @@ namespace LogicTest
         {
             public Position Position { get; set; }
             public VelocityVector Velocity { get; set; }
+            public Guid BallId { get; }
 
             public FakeBall(Position position, VelocityVector velocity)
             {

@@ -8,6 +8,7 @@ namespace Logic.Implementation
     public class LogicApi : ILogicApi
     {
         public List<ILogicBall> LogicBalls { get; } = [];
+        private List<Guid> BallsId = [];
 
         private readonly IDataApi _dataApi;
 
@@ -39,7 +40,14 @@ namespace Logic.Implementation
         {
             lock (_lock)
             {
-                CheckCollision(value);
+                if (!BallsId.Contains(value.BallId))
+                {
+                    CheckCollision(value);
+                }
+                else
+                {
+                    BallsId.Remove(value.BallId);
+                }
             }
         }
 
@@ -73,7 +81,7 @@ namespace Logic.Implementation
 
         private bool IsBallIntersectingAnyOther(int x, int y, IList<ILogicBall> existingBalls)
         {
-            lock (_lock)
+            lock (_ballsLock)
             {
                 foreach (var existingBall in existingBalls)
                 {
@@ -93,33 +101,30 @@ namespace Logic.Implementation
 
         private void CheckCollision(IBall ball)
         {
-            lock (_lock)
+            List<IBall> ballsCopy;
+            
+            ballsCopy = [];
+            foreach (var apiBall in _dataApi.Balls) ballsCopy.Add(apiBall);
+                                                            
+            
+            foreach (var b in ballsCopy)
             {
-                List<IBall> ballsCopy;
-                lock (_ballsLock)
+                if (b?.Position == null || ball.Position == null) continue;
+                if (b.Position.X == ball.Position.X && b.Position.Y == ball.Position.Y) continue;
+
+                var distance = Math.Sqrt((b.Position.X - ball.Position.X) * (b.Position.X - ball.Position.X) +
+                                         (b.Position.Y - ball.Position.Y) * (b.Position.Y - ball.Position.Y));
+
+
+                if (distance <= Diameter * Rescale)
                 {
-                    ballsCopy = [];
-                    foreach (var apiBall in _dataApi.Balls) ballsCopy.Add(apiBall);
-                }                                                 
-                
-                foreach (var b in ballsCopy)
-                {
-                    if (b?.Position == null || ball.Position == null) continue;
-                    if (b.Position.X == ball.Position.X && b.Position.Y == ball.Position.Y) continue;
-
-                    var distance = Math.Sqrt((b.Position.X - ball.Position.X) * (b.Position.X - ball.Position.X) +
-                                             (b.Position.Y - ball.Position.Y) * (b.Position.Y - ball.Position.Y));
-
-
-                    if (distance <= Diameter * Rescale)
-                    {
-                        HandleBallCollision(b, ball);
-                    }
+                    HandleBallCollision(b, ball);
                 }
-                
-
-                HandleWallCollision(ball);
             }
+            
+
+            HandleWallCollision(ball);
+            
         }
 
         private void HandleBallCollision(IBall ball, IBall otherBall)
@@ -140,6 +145,7 @@ namespace Logic.Implementation
 
             ball.Velocity = new((int)newVx1, (int)newVy1);
             otherBall.Velocity = new((int)newVx2, (int)newVy2);
+            BallsId.Add(otherBall.BallId);
         }
 
         private void HandleWallCollision(IBall ball)

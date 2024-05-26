@@ -4,5 +4,6 @@
     {
         Position Position { get; }
         VelocityVector Velocity { get; set; }
+        Guid BallId { get; }
     }
 }
