@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using Data.Abstract;
-
+using System.Collections.Concurrent;
 namespace Data.Implementation
 {
     public class Ball : IBall
@@ -12,14 +12,15 @@ namespace Data.Implementation
         private bool _movement = false;
         private Thread _thread;
 
-        private const int MoveIntervalMs = 10;
+        private const int MoveIntervalMs = 4;
         private readonly Stopwatch _stopwatch = new();
 
         private bool _disposed = false;
 
         private readonly List<IObserver<IBall>> _observers = [];
 
-        public Ball(Position p, VelocityVector v)
+        private DataLogger _dataLogger;
+        public Ball(Position p, VelocityVector v, DataLogger logger)
         {
             Position = p;
             Velocity = v;
@@ -27,6 +28,7 @@ namespace Data.Implementation
             _movement = true;
             _thread = new Thread(Run);
             _thread.Start();
+            _dataLogger = logger;
         }
         
         private void Run()
@@ -42,6 +44,7 @@ namespace Data.Implementation
                 var moveTime = currentTime - previousTime;
 
                 MoveSelf(moveTime);
+                LoggBall();
 
                 previousTime = currentTime;
 
@@ -56,6 +59,12 @@ namespace Data.Implementation
             }
         }
 
+        public void LoggBall()
+        {
+            string timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
+            _dataLogger.AddBall(new LoggerBall(Position.X, Position.Y, Velocity.X, Velocity.Y, BallId,timestamp));
+
+        }
         private void MoveSelf(int time)
         {
             Position = new(Position.X + (Velocity.X * time), Position.Y + (Velocity.Y * time));

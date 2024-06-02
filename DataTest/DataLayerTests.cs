@@ -79,7 +79,7 @@ namespace DataTest
             {
                 var position = new Position(0, 0);
                 var velocity = new VelocityVector(1, 1);
-                _ball = new Ball(position, velocity);
+                _ball = new Ball(position, velocity, new DataLogger());
 
                 Assert.AreEqual(position, _ball.Position);
                 Assert.AreEqual(velocity, _ball.Velocity);

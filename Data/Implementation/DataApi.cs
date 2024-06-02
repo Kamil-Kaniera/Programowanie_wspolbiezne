@@ -8,13 +8,18 @@ namespace Data.Implementation
         private const int TableX = 500;
         private const int TableY = 500;
 
+        public DataApi()
+        {
+            _dataLogger = new DataLogger();
+        }
+
         public List<IBall> Balls { get; } = [];
         private readonly Table _table = new(TableX * Rescale, TableY * Rescale);
-
+        private DataLogger _dataLogger;
 
         public IBall AddBall(Position p)
         {
-            Ball ball = new Ball(p, new VelocityVector());
+            Ball ball = new Ball(p, new VelocityVector(), _dataLogger);
             Balls.Add(ball);
             return ball;
         }
