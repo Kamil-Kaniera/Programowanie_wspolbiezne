@@ -21,9 +21,14 @@ public class DataLogger
             string loggersDirectory = Path.Combine(tempPath, "Loggs");
             _pathToFile = Path.Combine(loggersDirectory, "DataBallLog.json");
             _ballsConcurrentQueue = new ConcurrentQueue<JObject>();
-            _capacity = 1000; 
+            _capacity = 1000;
 
-            
+            if (!Directory.Exists(loggersDirectory))
+            {
+                Directory.CreateDirectory(loggersDirectory);
+            }
+
+
             if (File.Exists(_pathToFile))
             {
                 try
