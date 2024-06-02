@@ -31,22 +31,25 @@ namespace Data.Implementation
         
         private void Run()
         {
+            var previousTime = 0;
+
+            _stopwatch.Start();
+
             while (_movement)
             {
+                var currentTime = (int)_stopwatch.ElapsedMilliseconds;
 
-                // Restart the stopwatch
-                _stopwatch.Restart();
+                var moveTime = currentTime - previousTime;
 
-                MoveSelf(1);
+                MoveSelf(moveTime);
 
-                // Stop the stopwatch and measure time of MoveSelf()
-                _stopwatch.Stop();
+                previousTime = currentTime;
 
                 var waitingPeriod = 0;
 
                 // Set the waitingPeriod so that all tasks have the same delay 
-                if (MoveIntervalMs - _stopwatch.ElapsedMilliseconds > 0)
-                    waitingPeriod = MoveIntervalMs - (int)_stopwatch.ElapsedMilliseconds;
+                if (MoveIntervalMs - moveTime > 0)
+                    waitingPeriod = MoveIntervalMs - moveTime;
 
                 Thread.Sleep(waitingPeriod);
 
