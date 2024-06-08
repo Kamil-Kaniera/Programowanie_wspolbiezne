@@ -7,12 +7,13 @@ namespace Data.Implementation;
 public class DataLogger
 {
     
-        private ConcurrentQueue<JObject> _ballsConcurrentQueue;
-        private JArray _logArray;
-        private string _pathToFile;
+        private readonly ConcurrentQueue<JObject> _ballsConcurrentQueue;
+        private readonly JArray _logArray = [];
+        private readonly string _pathToFile;
         private readonly object _writeLock = new();
+        private readonly object _queueLock = new();
         private Task _logerTask;
-        private int _capacity;
+        private const int Capacity = 1000;
 
 
         public DataLogger() 
@@ -21,78 +22,72 @@ public class DataLogger
             string loggersDirectory = Path.Combine(tempPath, "Loggs");
             _pathToFile = Path.Combine(loggersDirectory, "DataBallLog.json");
             _ballsConcurrentQueue = new ConcurrentQueue<JObject>();
-            _capacity = 1000;
 
             if (!Directory.Exists(loggersDirectory))
             {
                 Directory.CreateDirectory(loggersDirectory);
-            }
-
-
-            if (File.Exists(_pathToFile))
-            {
-                try
-                {
-                    string input = File.ReadAllText(_pathToFile);
-                    _logArray = JArray.Parse(input);
-                }
-                catch(Exception ex)
-                {
-                    _logArray = new JArray();
-                }
-                
-            }
-            else
-            {
-                _logArray = new JArray();
                 FileStream file = File.Create(_pathToFile);
                 file.Close();
             }
         }
-        public void AddBall(LoggerBall ball)
+
+        public void AddBall(Ball ball, string time)
         {
-            if (_ballsConcurrentQueue.Count == _capacity - 1)
+            lock (_queueLock)
             {
-                JObject log = new();
-                log["Time"] = DateTime.Now.ToString("HH:mm:ss.fff");
-                log["Message"] = "Max capacity has been reached!!!";
-                _ballsConcurrentQueue.Enqueue(log);    
-                if (_logerTask == null || _logerTask.IsCompleted)
+                if (_logerTask is { IsCompleted: false }) return;
+
+                if (_ballsConcurrentQueue.Count < Capacity)
                 {
-                    _logerTask = Task.Run(SaveDataToLog);
-                } 
-            } 
-            else
-            {
-                JObject log = JObject.FromObject(ball);
-                _ballsConcurrentQueue.Enqueue(log);    
-                if (_logerTask == null || _logerTask.IsCompleted)
-                {
-                    _logerTask = Task.Run(SaveDataToLog);
+                    _logerTask = Task.Run(() => SaveDataToLog(ball, time));
                 }
-            }            
-            
+                else
+                {
+                    _logerTask = Task.Run(() => SaveDataToLog(null, time));
+                }
+            }
+           
         }
         
-        private void SaveDataToLog()
+        private void SaveDataToLog(Ball ball, string time)
         {
+            JObject log = [];
+
+            if (ball is null)
+            {
+                log["Time"] = time;
+                log["Message"] = "Max capacity has been reached!!!";
+            }
+            else
+            {
+                log = JObject.FromObject(ball);
+                log["Time"] = time;
+            }
+
+
+            _ballsConcurrentQueue.Enqueue(log);
+
             lock (_writeLock)
             {
-                while (_ballsConcurrentQueue.TryDequeue(out JObject ball)) 
+                while (_ballsConcurrentQueue.TryDequeue(out JObject b)) 
                 {
-                    _logArray.Add(ball);
+                    _logArray.Add(b);
                 }
-                String diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
+
+                // Check if the buffer is empty
+                if (!_logArray.HasValues) return;
+
+                string diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
+                
+                try
                 {
-                    try
-                    {
-                        File.WriteAllText(_pathToFile, diagnosticData);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
+                    File.WriteAllText(_pathToFile, diagnosticData);
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+                
             }
            
         }
