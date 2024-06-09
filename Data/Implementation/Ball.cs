@@ -61,9 +61,7 @@ namespace Data.Implementation
 
         public void LoggBall()
         {
-            string timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
-            _dataLogger.AddBall(this, timestamp);
-
+            _dataLogger.AddBall(new LoggerBall(Position.X, Position.Y, Velocity.X, Velocity.Y, BallId, DateTime.Now));
         }
         private void MoveSelf(int time)
         {

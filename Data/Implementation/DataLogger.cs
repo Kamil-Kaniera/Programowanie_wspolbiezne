@@ -6,9 +6,7 @@ namespace Data.Implementation;
 
 public class DataLogger
 {
-    
         private readonly ConcurrentQueue<JObject> _ballsConcurrentQueue;
-        private readonly JArray _logArray = [];
         private readonly string _pathToFile;
         private readonly object _writeLock = new();
         private readonly object _queueLock = new();
@@ -31,7 +29,7 @@ public class DataLogger
             }
         }
 
-        public void AddBall(Ball ball, string time)
+        public void AddBall(LoggerBall ball)
         {
             lock (_queueLock)
             {
@@ -39,29 +37,28 @@ public class DataLogger
 
                 if (_ballsConcurrentQueue.Count < Capacity)
                 {
-                    _logerTask = Task.Run(() => SaveDataToLog(ball, time));
+                    _logerTask = Task.Run(() => SaveDataToLog(ball));
                 }
                 else
                 {
-                    _logerTask = Task.Run(() => SaveDataToLog(null, time));
+                    _logerTask = Task.Run(() => SaveDataToLog(null));
                 }
             }
            
         }
         
-        private void SaveDataToLog(Ball ball, string time)
+        private void SaveDataToLog(LoggerBall ball)
         {
             JObject log = [];
 
             if (ball is null)
             {
-                log["Time"] = time;
+                log["Time"] = DateTime.Now;
                 log["Message"] = "Max capacity has been reached!!!";
             }
             else
             {
                 log = JObject.FromObject(ball);
-                log["Time"] = time;
             }
 
 
@@ -69,27 +66,21 @@ public class DataLogger
 
             lock (_writeLock)
             {
-                while (_ballsConcurrentQueue.TryDequeue(out JObject b)) 
-                {
-                    _logArray.Add(b);
-                }
-
                 // Check if the buffer is empty
-                if (!_logArray.HasValues) return;
+                if (_ballsConcurrentQueue.IsEmpty) return;
 
-                string diagnosticData = JsonConvert.SerializeObject(_logArray, Formatting.Indented);
-                
-                try
+                while (_ballsConcurrentQueue.TryDequeue(out JObject entry))
                 {
-                    File.WriteAllText(_pathToFile, diagnosticData);
+                    try
+                    {
+                        File.AppendAllText(_pathToFile, JsonConvert.SerializeObject(entry, Formatting.Indented));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-                
             }
-           
         }
         
 }
